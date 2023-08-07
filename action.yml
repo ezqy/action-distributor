@@ -1,0 +1,17 @@
+name: Github Actions Distributor
+description: Distribute Github Actions to other repositories
+author: 'ezqy'
+inputs:
+  token:
+    description: 'Github Token'
+    required: true
+  target:
+    description: 'Target repository'
+    required: true
+  path:
+    description: 'Path to distribute'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/action/index.js'
+  post-if: success()

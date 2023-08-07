@@ -1,0 +1,9 @@
+{
+  "tc3-japan": [
+    {
+      "aws-lambda-cicd-test": {
+        "workflows": ["sample.yml", "sample2.yml"]
+      }
+    }
+  ]
+}
