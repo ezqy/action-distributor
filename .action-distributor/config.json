@@ -1,0 +1,7 @@
+[
+  {
+    "repo": "ezqy/dist-test",
+    "workflows": ["sample.yml", "sample2.yml"],
+    "actions": ["sample-action", "sample-action2"]
+  }
+]

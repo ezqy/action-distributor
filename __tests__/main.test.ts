@@ -1,10 +1,10 @@
 import * as main from '../src/main';
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 import * as core from '@actions/core';
 
 describe('main tests', () => {
-  let inputs = {} as any;
+  const inputs = {} as any;
   let setOutputSpy: jest.SpyInstance;
   let inSpy: jest.SpyInstance;
 
@@ -20,10 +20,9 @@ describe('main tests', () => {
   })
 
   it('exec', async() => {
-    inputs['repo'] = process.env['repo']
-    inputs['path'] = process.env['path']
-    inputs['owner'] = process.env['owner']
+    inputs['repo'] = process.env.repo
+    inputs['config'] = '.action-distributor/config.json'
     await main.run();
-    expect(setOutputSpy).toHaveBeenCalledWith('result', 'success');
+    expect(setOutputSpy).toHaveBeenCalledWith('url', expect.any(String));
   });
 }); 

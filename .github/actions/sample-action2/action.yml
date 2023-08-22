@@ -1,0 +1,7 @@
+name: sample-action2
+
+runs:
+  using: "composite"
+  steps:
+  - run: echo "Hello World 2"
+    shell: bash

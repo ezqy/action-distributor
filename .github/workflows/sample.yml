@@ -1,0 +1,13 @@
+name: sample
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/sample-action
+      - uses: ./.github/actions/sample-action
+      - uses: ./.github/actions/sample-action2
