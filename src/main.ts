@@ -1,14 +1,16 @@
 import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as path from 'path';
-import { execSync } from 'child_process';
 import { Octokit } from "@octokit/rest";
 
-const tmp_dir = path.join(process.cwd(), 'tmp')
 
+interface JsonFile {
+  [key: string]: Organization;
+}
+interface Organization {
+  [key: string]: Repository;
+}
 interface Repository {
-  org: string;
-  repo: string;
   workflows: string[];
   actions: string[];
 }
@@ -23,9 +25,8 @@ interface TreeItem {
 
 export async function run() {
   try{
+    const owner = core.getInput('owner');
     const repo = core.getInput('repo');
-    const owner = repo.split('/')[0];
-    const name = repo.split('/')[1];
     const token = process.env.GH_TOKEN || '';
     const config = core.getInput('config')
     const configPath = path.join(process.cwd(), config);
@@ -37,11 +38,14 @@ export async function run() {
       log: console
     });
 
-    const json: Repository[] = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const json: JsonFile = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     core.debug(`config: ${JSON.stringify(json)}`)
 
-    const target: Repository = json.find(c => c.repo === repo) as Repository;
-    core.debug(target.repo)
+
+    const org: Organization = json[owner as keyof JsonFile] as Organization;
+    const target: Repository = org[repo as keyof Organization] as Repository;
+
+    core.info(`json: ${JSON.stringify(target)}`)
 
     const workflows: string[] = target.workflows || []
     const actions: string[] = target.actions || []
@@ -95,46 +99,46 @@ export async function run() {
 
     core.info('getRef')
     const baseTree = await octokit.git.getRef({
-      owner: owner,
-      repo: name,
+      owner,
+      repo,
       ref: `heads/${parentBranch}`,
     })
 
     core.info('createRef')
     const newBranchRef = await octokit.git.createRef({
-      owner: owner,
-      repo: name,
+      owner,
+      repo,
       ref: `refs/heads/${childBranch}`,
       sha: baseTree.data.object.sha,
     })
 
     core.info('getCommit')
     const currentCommit = await octokit.git.getCommit({
-      owner: owner,
-      repo: name,
+      owner,
+      repo,
       commit_sha: newBranchRef.data.object.sha,
     })
 
     core.info('createTree')
     const tree = await octokit.git.createTree({
-      owner: owner,
-      repo: name,
+      owner,
+      repo,
       base_tree: currentCommit.data.tree.sha,
       tree: treeItems,
     })
 
     core.info('createCommit')
     const commit = await octokit.git.createCommit({
-      owner: owner,
-      repo: name,
+      owner,
+      repo,
       message: 'sync workflows',
       tree: tree.data.sha,
       parents: [currentCommit.data.sha],
     })
 
     const compare = await octokit.repos.compareCommits({
-      owner: owner,
-      repo: name,
+      owner,
+      repo,
       base: currentCommit.data.sha,
       head: commit.data.sha,
     }) 
@@ -144,8 +148,8 @@ export async function run() {
     if(diff.length !== 0){
       core.info('updateRef')
       const response = await octokit.git.updateRef({
-        owner: owner,
-        repo: name,
+        owner,
+        repo,
         ref: `heads/${childBranch}`,
         sha: commit.data.sha,
       });
@@ -153,8 +157,8 @@ export async function run() {
 
       core.info('createPullRequest')
       const pullRequest = await octokit.pulls.create({
-        owner: owner,
-        repo: name,
+        owner,
+        repo,
         title: 'sync workflows',
         head: childBranch,
         base: parentBranch,
@@ -165,8 +169,8 @@ export async function run() {
       core.info('no change')
       core.info(`deleteRef ${childBranch}`)
       await octokit.git.deleteRef({
-        owner: owner,
-        repo: name,
+        owner,
+        repo,
         ref: `heads/${childBranch}`,
       });
       core.setOutput('url', '');

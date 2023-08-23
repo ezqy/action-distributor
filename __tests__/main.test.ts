@@ -20,8 +20,9 @@ describe('main tests', () => {
   })
 
   it('exec', async() => {
+    inputs['owner'] = process.env.owner
     inputs['repo'] = process.env.repo
-    inputs['config'] = '.action-distributor/config.json'
+    inputs['config'] = '__tests__/data/config.json'
     await main.run();
     expect(setOutputSpy).toHaveBeenCalledWith('url', expect.any(String));
   });
