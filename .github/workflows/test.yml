@@ -15,8 +15,6 @@ jobs:
   list:
     runs-on: ubuntu-latest
     env:
-      app_id: ${{ secrets.app_id }}
-      private_key: ${{ secrets.private_key }}
       owner: tc3-japan
     outputs:
       token: ${{ steps.generate_token.outputs.token }}
@@ -24,11 +22,6 @@ jobs:
       owner: ${{ env.owner }}
     steps:
       - uses: actions/checkout@v3
-      - id: generate_token
-        uses: ezqy/ghaction/generate-github-app-token@v1.0.0
-        with:
-          app_id: ${{ env.app_id }}
-          private_key: ${{ env.private_key }}
       - id: list
         uses: actions/github-script@v6
         with:
@@ -39,12 +32,20 @@ jobs:
 
   distribute:
     needs: list
+    env:
+      app_id: ${{ secrets.app_id }}
+      private_key: ${{ secrets.private_key }}
     strategy:
       matrix:
         target: ${{ fromJson(needs.list.outputs.target) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - id: generate_token
+        uses: ezqy/ghaction/generate-github-app-token@v1.0.0
+        with:
+          app_id: ${{ env.app_id }}
+          private_key: ${{ env.private_key }}
       - uses: ezqy/action-distributor@main
         with:
           owner: ${{ needs.list.outputs.owner }}
