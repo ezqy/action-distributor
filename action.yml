@@ -13,6 +13,6 @@ inputs:
     required: false
     default: .action-distributor/config.json
 runs:
-  using: 'node16'
+  using: 'node18'
   main: 'dist/action/index.js'
   post-if: success()

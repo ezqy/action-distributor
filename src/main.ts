@@ -1,8 +1,8 @@
 import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Octokit } from "@octokit/rest";
 import * as fetch from "node-fetch";
+import { Octokit } from "@octokit/rest";
 
 interface JsonFile {
   [key: string]: Organization;
