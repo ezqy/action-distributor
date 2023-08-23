@@ -16,6 +16,10 @@ inputs:
     description: 'The commit message'
     required: false
     default: 'Distribute Github Actions'
+  branch-name:
+    description: 'The branch to commit to'
+    required: false
+    default: 'feature/action-distributor'
 runs:
   using: 'node20'
   main: 'dist/action/index.js'

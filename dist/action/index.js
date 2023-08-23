@@ -10690,7 +10690,8 @@ async function run() {
         const config = core.getInput('config');
         const configPath = path.join(process.cwd(), config);
         const parentBranch = 'main';
-        const childBranch = `feature/action-distributor-${Date.now()}`;
+        const childBranch = core.getInput('branchName') || `feature/action-distributor`;
+        const childBranchWithDate = `${childBranch}-${Date.now()}`;
         const octokit = new rest_1.Octokit({
             auth: token,
             log: console,
@@ -10760,7 +10761,7 @@ async function run() {
         const newBranchRef = await octokit.git.createRef({
             owner,
             repo,
-            ref: `refs/heads/${childBranch}`,
+            ref: `refs/heads/${childBranchWithDate}`,
             sha: baseTree.data.object.sha,
         });
         core.info('getCommit');
@@ -10792,11 +10793,27 @@ async function run() {
         });
         const diff = compare.data.files || [];
         if (diff.length !== 0) {
+            core.info('ListBranches');
+            const branches = await octokit.rest.repos.listBranches({
+                owner,
+                repo,
+            });
+            const matchingBranches = branches.data.filter((b) => b.name.startsWith(childBranch)) || [];
+            await Promise.all(matchingBranches.map(async (branch) => {
+                if (branch.name !== childBranchWithDate) {
+                    await octokit.rest.git.deleteRef({
+                        owner,
+                        repo,
+                        ref: `heads/${branch.name}`,
+                    });
+                    core.info(`deleteBranches ${branch.name}`);
+                }
+            }));
             core.info('updateRef');
             const response = await octokit.git.updateRef({
                 owner,
                 repo,
-                ref: `heads/${childBranch}`,
+                ref: `heads/${childBranchWithDate}`,
                 sha: commit.data.sha,
             });
             core.setOutput('url', response.data.url);
@@ -10805,18 +10822,18 @@ async function run() {
                 owner,
                 repo,
                 title: commitMessage,
-                head: childBranch,
+                head: childBranchWithDate,
                 base: parentBranch,
             });
             core.info(`Pull Request created successfully: ${pullRequest.data.html_url}`);
         }
         else {
             core.info('no change');
-            core.info(`deleteRef ${childBranch}`);
+            core.info(`deleteRef ${childBranchWithDate}`);
             await octokit.git.deleteRef({
                 owner,
                 repo,
-                ref: `heads/${childBranch}`,
+                ref: `heads/${childBranchWithDate}`,
             });
             core.setOutput('url', '');
         }
