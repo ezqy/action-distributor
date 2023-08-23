@@ -52,5 +52,5 @@ jobs:
           repo: ${{ matrix.target }}
           config: ${{ env.CONFIG_PATH }}
         env:
-          GH_TOKEN: ${{ needs.list.outputs.token }}
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
           
