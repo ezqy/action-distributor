@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Octokit } from "@octokit/rest";
-
+import * as fetch from "node-fetch";
 
 interface JsonFile {
   [key: string]: Organization;
@@ -35,7 +35,10 @@ export async function run() {
 
     const octokit = new Octokit({
       auth: token,
-      log: console
+      log: console,
+      request: {
+        fetch: fetch,
+      }
     });
 
     const json: JsonFile = JSON.parse(fs.readFileSync(configPath, 'utf8'));
