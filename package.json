@@ -4,7 +4,7 @@
   "description": "Distribute specific github actions to another organization's repository",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build src/action.ts -o dist",
+    "build": "ncc build src/action.ts -o dist/action",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts",
