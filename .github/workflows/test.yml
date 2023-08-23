@@ -42,11 +42,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: generate_token
-        uses: ezqy/ghaction/generate-github-app-token@v1.0.0
+        uses: ezqy/ghaction/generate-github-app-token@v1
         with:
           app_id: ${{ env.app_id }}
           private_key: ${{ env.private_key }}
-      - uses: ezqy/action-distributor@main
+      - uses: ezqy/action-distributor@v1
         with:
           owner: ${{ needs.list.outputs.owner }}
           repo: ${{ matrix.target }}
