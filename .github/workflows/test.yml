@@ -23,6 +23,7 @@ jobs:
       target: ${{ steps.list.outputs.result }}
       owner: ${{ env.owner }}
     steps:
+      - uses: actions/checkout@v3
       - id: generate_token
         uses: ezqy/ghaction/generate-github-app-token@v1.0.0
         with:
@@ -32,9 +33,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const fs = require('fs');
             const { CONFIG_PATH } = process.env
-            await fs.readdirSync('./')
             const config = require(CONFIG_PATH);
             return Object.keys(config[process.env.owner])
 
