@@ -6735,7 +6735,8 @@ async function run() {
         const childBranch = `feature/action-distributor-${Date.now()}`;
         const octokit = new rest_1.Octokit({
             auth: token,
-            log: console
+            log: console,
+            request: { fetch }
         });
         const json = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         core.debug(`config: ${JSON.stringify(json)}`);

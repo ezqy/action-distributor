@@ -35,7 +35,8 @@ export async function run() {
 
     const octokit = new Octokit({
       auth: token,
-      log: console
+      log: console,
+      request: { fetch }
     });
 
     const json: JsonFile = JSON.parse(fs.readFileSync(configPath, 'utf8'));
