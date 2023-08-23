@@ -2,7 +2,7 @@ name: Github Actions Distributor
 description: Distribute Github Actions to other repositories
 author: 'ezqy'
 inputs:
-  org:
+  owner:
     description: 'The organization to distribute to'
     required: true
   repo:
