@@ -22,6 +22,7 @@ describe('main tests', () => {
   it('exec', async() => {
     inputs['owner'] = process.env.owner
     inputs['repo'] = process.env.repo
+    inputs['commit-message'] = 'test'
     inputs['config'] = '__tests__/data/config.json'
     await main.run();
     expect(setOutputSpy).toHaveBeenCalledWith('url', expect.any(String));

@@ -12,6 +12,10 @@ inputs:
     description: 'The configuration file'
     required: false
     default: .action-distributor/config.json
+  commit-message:
+    description: 'The commit message'
+    required: false
+    default: 'Distribute Github Actions'
 runs:
   using: 'node20'
   main: 'dist/action/index.js'

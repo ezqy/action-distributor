@@ -21,3 +21,6 @@ contents
 workflows
 pull_requests
 ```
+
+## Settings
+Read and write permission

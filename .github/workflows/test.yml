@@ -51,6 +51,7 @@ jobs:
           owner: ${{ needs.list.outputs.owner }}
           repo: ${{ matrix.target }}
           config: ${{ env.CONFIG_PATH }}
+          commit-message: "Distribute actions from ${{ github.repository }}"
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
           

@@ -27,6 +27,7 @@ export async function run() {
   try{
     const owner = core.getInput('owner');
     const repo = core.getInput('repo');
+    const commitMessage = core.getInput('commit-message');
     const token = process.env.GH_TOKEN || '';
     const config = core.getInput('config')
     const configPath = path.join(process.cwd(), config);
@@ -134,7 +135,7 @@ export async function run() {
     const commit = await octokit.git.createCommit({
       owner,
       repo,
-      message: 'sync workflows',
+      message: commitMessage,
       tree: tree.data.sha,
       parents: [currentCommit.data.sha],
     })
@@ -162,7 +163,7 @@ export async function run() {
       const pullRequest = await octokit.pulls.create({
         owner,
         repo,
-        title: 'sync workflows',
+        title: commitMessage,
         head: childBranch,
         base: parentBranch,
       })
